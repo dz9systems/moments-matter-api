@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Secrets — never commit
+.env
+service-account.json
+*.pem
+
+# Build
+dist/
+*.tsbuildinfo
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.log

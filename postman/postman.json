@@ -1,0 +1,116 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-moments-matter-api",
+    "name": "MomentsMatter API",
+    "description": "Test the MomentsMatter API (no auth headers required).\n\n**Setup:** Edit collection variables:\n- **`base_url`** — e.g. `http://localhost:3000`\n- **`upload_id`** / **`moment_id`** — paste from **Analyze** response to test Generate and Get upload\n\nAnalyze/Generate/History use a fixed dev user id in the API. Upload detail only returns uploads owned by that same dev user.\n\n**Import:** File → Import → select this JSON.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "noauth"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "upload_id",
+      "value": ""
+    },
+    {
+      "key": "moment_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "POST /api/analyze (text)",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "text",
+              "value": "Today we had a great team meeting. Sarah shared an inspiring story about her first project. Then we celebrated Mike's promotion with cake. Everyone left feeling motivated.",
+              "type": "text"
+            }
+          ]
+        },
+        "url": "{{base_url}}/api/analyze",
+        "description": "Form field **`text`** or **`textInput`**. No Authorization header."
+      }
+    },
+    {
+      "name": "POST /api/analyze (file)",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": "{{base_url}}/api/analyze",
+        "description": "Form field **`file`**. In Postman, choose **Select Files** on the file row. No auth."
+      }
+    },
+    {
+      "name": "POST /api/generate",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"momentId\": \"{{moment_id}}\",\n  \"goal\": \"Turn this into a 60-second social video script\"\n}"
+        },
+        "url": "{{base_url}}/api/generate",
+        "description": "JSON: **`momentId`**, **`goal`**. Set **`moment_id`** from Analyze response. No auth."
+      }
+    },
+    {
+      "name": "GET /api/history",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/history",
+        "description": "Lists uploads for the API dev user (newest first). No auth."
+      }
+    },
+    {
+      "name": "GET /api/uploads/:id",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/uploads/{{upload_id}}",
+        "description": "Set **`upload_id`** to an upload id from Analyze or History. Must be owned by the dev user or returns 403. No auth."
+      }
+    }
+  ]
+}
