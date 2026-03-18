@@ -5,6 +5,7 @@ import {
   getCreativePacketsByUploadId,
 } from '../lib/firestore.js';
 import { getSignedViewUrl } from '../lib/storage.js';
+import type { UploadWithSignedUrls } from '../types/index.js';
 
 const DEV_USER_ID = '1234567890';
 
@@ -37,7 +38,7 @@ export async function getUploadDetail(req: Request, res: Response): Promise<void
     res.status(500).json({ error: 'Failed to fetch upload detail' });
     return;
   }
-  let uploadOut = { ...uploadRow };
+  let uploadOut: UploadWithSignedUrls = { ...uploadRow };
   if (uploadRow.storagePath) {
     const signed = await getSignedViewUrl(uploadRow.storagePath);
     if (signed) {

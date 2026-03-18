@@ -2,7 +2,8 @@
  * Firestore access for uploads, moments, and creativePackets collections.
  */
 
-import { getDb } from './firebase';
+import type { DocumentData, QueryDocumentSnapshot } from 'firebase-admin/firestore';
+import { getDb } from './firebase.js';
 import type { Upload, Moment, CreativePacket } from '../types/index.js';
 const UPLOADS = 'uploads';
 const MOMENTS = 'moments';
@@ -57,7 +58,7 @@ export async function getUploadsByUserId(
     .where('userId', '==', userId)
     .orderBy('createdAt', 'desc')
     .get();
-  return snapshot.docs.map((doc) => {
+  return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => {
     const data = doc.data();
     return {
       id: doc.id,
@@ -123,7 +124,7 @@ export async function getMomentsByUploadId(
     .collection(MOMENTS)
     .where('uploadId', '==', uploadId)
     .get();
-  return snapshot.docs.map((doc) => {
+  return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => {
     const data = doc.data();
     return {
       id: doc.id,
@@ -170,7 +171,7 @@ export async function getCreativePacketsByUploadId(
     .collection(CREATIVE_PACKETS)
     .where('uploadId', '==', uploadId)
     .get();
-  return snapshot.docs.map((doc) => {
+  return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => {
     const data = doc.data();
     return {
       id: doc.id,

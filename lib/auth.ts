@@ -3,7 +3,7 @@
  */
 
 import { getAuth } from 'firebase-admin/auth';
-import { initFirebase } from './firebase';
+import { initFirebase } from './firebase.js';
 
 /**
  * Gets the Firebase ID token from the request Authorization header.

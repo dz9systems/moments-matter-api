@@ -5,9 +5,10 @@ Plain **Node.js + Express + TypeScript** API (no Next.js). The frontend is a sep
 ## Setup
 
 1. Copy `.env.example` to `.env` and set:
-   - `GOOGLE_APPLICATION_CREDENTIALS` — path to your Firebase service account JSON
+   - **Local:** `GOOGLE_APPLICATION_CREDENTIALS` — path to your Firebase service account JSON (file is gitignored; never commit it).
+   - **Render / production:** `FIREBASE_SERVICE_ACCOUNT_JSON` — the **entire** service account JSON as a single-line string (Dashboard → Environment). Do not commit.
    - `FIREBASE_PROJECT_ID` — your Firebase project ID
-   - `FIREBASE_STORAGE_BUCKET` — e.g. `your-project-id.appspot.com`
+   - `FIREBASE_STORAGE_BUCKET` — e.g. `your-project-id.firebasestorage.app`
    - `OPENAI_API_KEY` — your OpenAI API key
    - `CORS_ORIGIN` (optional) — React app origin, e.g. `http://localhost:5173`
    - `PORT` (optional) — default 3000

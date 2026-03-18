@@ -11,6 +11,12 @@ export interface Upload {
   createdAt: FirebaseTimestamp;
 }
 
+/** Upload row plus optional signed Storage URLs (API responses only). */
+export type UploadWithSignedUrls = Upload & {
+  fileViewUrl?: string;
+  fileViewUrlExpiresAt?: string;
+};
+
 /** Firestore moment document. */
 export interface Moment {
   id: string;
@@ -67,7 +73,7 @@ export interface HistoryResponse {
 
 /** API response shape for single upload. */
 export interface UploadDetailResponse {
-  upload: Upload;
+  upload: UploadWithSignedUrls;
   moments: Moment[];
   creativePackets: CreativePacket[];
 }

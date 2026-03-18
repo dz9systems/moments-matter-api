@@ -2,7 +2,7 @@
  * Firebase Storage helpers for uploading media files.
  */
 
-import { getBucket } from './firebase';
+import { getBucket } from './firebase.js';
 
 /**
  * Uploads a file buffer to Firebase Storage and returns the full path.
