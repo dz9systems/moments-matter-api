@@ -10,7 +10,8 @@ Plain **Node.js + Express + TypeScript** API (no Next.js). The frontend is a sep
    - `FIREBASE_PROJECT_ID` — your Firebase project ID
    - `FIREBASE_STORAGE_BUCKET` — e.g. `your-project-id.firebasestorage.app`
    - `OPENAI_API_KEY` — your OpenAI API key
-   - `CORS_ORIGIN` (optional) — React app origin, e.g. `http://localhost:5173`
+   - `CORS_ORIGIN` — comma-separated allowed origins, e.g. `http://localhost:5173,https://your-app.vercel.app`. Use `*` only for local dev.
+   - `CORS_ALLOW_MAGIC_PATTERNS` — set to `1` or `true` to allow Magic Patterns preview URLs (`*-render.magicpatterns.app`), since the subdomain UUID changes each preview.
    - `PORT` (optional) — default 3000
 
 2. Install and run:
