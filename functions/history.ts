@@ -20,10 +20,19 @@ export async function getHistory(_req: Request, res: Response): Promise<void> {
   const withUrls = await Promise.all(
     uploads.map(async (u) => {
       if (!u.storagePath) return { ...u };
-      const signed = await getSignedViewUrl(u.storagePath);
-      return signed
-        ? { ...u, fileViewUrl: signed.url, fileViewUrlExpiresAt: signed.expiresAt }
-        : { ...u };
+      try {
+        const signed = await getSignedViewUrl(u.storagePath);
+        return signed
+          ? {
+              ...u,
+              fileViewUrl: signed.url,
+              fileViewUrlExpiresAt: signed.expiresAt,
+            }
+          : { ...u };
+      } catch (e) {
+        console.error('History signed URL error:', u.id, e);
+        return { ...u };
+      }
     }),
   );
 

@@ -11,7 +11,7 @@ Plain **Node.js + Express + TypeScript** API (no Next.js). The frontend is a sep
    - `FIREBASE_STORAGE_BUCKET` — e.g. `your-project-id.firebasestorage.app`
    - `OPENAI_API_KEY` — your OpenAI API key
    - `CORS_ORIGIN` — comma-separated allowed origins, e.g. `http://localhost:5173,https://your-app.vercel.app`. Use `*` only for local dev.
-   - `CORS_ALLOW_MAGIC_PATTERNS` — set to `1` or `true` to allow Magic Patterns preview URLs (`*-render.magicpatterns.app`), since the subdomain UUID changes each preview.
+   - `CORS_ALLOW_MAGIC_PATTERNS` — any host under `*.magicpatterns.app` is allowed **by default** (project + preview URLs). Set to `0` or `false` to turn that off.
    - `PORT` (optional) — default 3000
 
 2. Install and run:

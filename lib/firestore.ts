@@ -46,8 +46,22 @@ export async function getUploadById(
   };
 }
 
+function createdAtMillis(createdAt: unknown): number {
+  if (createdAt == null) return 0;
+  const c = createdAt as {
+    toMillis?: () => number;
+    _seconds?: number;
+    seconds?: number;
+  };
+  if (typeof c.toMillis === 'function') return c.toMillis();
+  if (typeof c._seconds === 'number') return c._seconds * 1000;
+  if (typeof c.seconds === 'number') return c.seconds * 1000;
+  return 0;
+}
+
 /**
  * Gets all uploads for a user, newest first.
+ * Uses only equality on userId (no composite index). Sorts in memory.
  */
 export async function getUploadsByUserId(
   userId: string
@@ -56,9 +70,8 @@ export async function getUploadsByUserId(
   const snapshot = await db
     .collection(UPLOADS)
     .where('userId', '==', userId)
-    .orderBy('createdAt', 'desc')
     .get();
-  return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => {
+  const rows = snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => {
     const data = doc.data();
     return {
       id: doc.id,
@@ -68,6 +81,10 @@ export async function getUploadsByUserId(
       createdAt: data.createdAt,
     };
   });
+  rows.sort(
+    (a, b) => createdAtMillis(b.createdAt) - createdAtMillis(a.createdAt),
+  );
+  return rows;
 }
 
 /**

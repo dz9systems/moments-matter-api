@@ -11,20 +11,28 @@ import { apiRouter } from './routes/index.js';
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
-/** Magic Patterns preview URLs: https://<uuid>-render.magicpatterns.app */
-function isMagicPatternsRenderOrigin(origin: string): boolean {
+/**
+ * Magic Patterns hosts (preview + project apps), e.g.:
+ * - https://project-moments-matter-mvp-457.magicpatterns.app
+ * - https://<uuid>-render.magicpatterns.app
+ */
+function isMagicPatternsAppOrigin(origin: string): boolean {
   try {
     const { hostname } = new URL(origin);
-    return /^[a-z0-9-]+-render\.magicpatterns\.app$/i.test(hostname);
+    return (
+      hostname === 'magicpatterns.app' ||
+      hostname.endsWith('.magicpatterns.app')
+    );
   } catch {
     return false;
   }
 }
 
 function corsOptions(): CorsOptions {
-  const allowMagic =
-    process.env.CORS_ALLOW_MAGIC_PATTERNS === 'true' ||
-    process.env.CORS_ALLOW_MAGIC_PATTERNS === '1';
+  /** Default on — covers project + preview hosts under *.magicpatterns.app. Set to 0/false to disable. */
+  const allowMagicPatterns =
+    process.env.CORS_ALLOW_MAGIC_PATTERNS !== '0' &&
+    process.env.CORS_ALLOW_MAGIC_PATTERNS !== 'false';
   const raw = (process.env.CORS_ORIGIN ?? '*').trim();
   const explicit = raw.split(',').map((s) => s.trim()).filter(Boolean);
 
@@ -42,7 +50,7 @@ function corsOptions(): CorsOptions {
         callback(null, true);
         return;
       }
-      if (allowMagic && isMagicPatternsRenderOrigin(origin)) {
+      if (allowMagicPatterns && isMagicPatternsAppOrigin(origin)) {
         callback(null, true);
         return;
       }
@@ -51,7 +59,14 @@ function corsOptions(): CorsOptions {
   };
 }
 
-app.use(cors(corsOptions()));
+app.use(
+  cors({
+    ...corsOptions(),
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    maxAge: 86400,
+  }),
+);
 
 app.use(express.json());
 app.use('/api', apiRouter);
