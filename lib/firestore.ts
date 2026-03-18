@@ -130,6 +130,21 @@ export async function getMomentById(
   };
 }
 
+function momentFromDoc(
+  doc: QueryDocumentSnapshot<DocumentData>,
+): Moment & { id: string } {
+  const data = doc.data();
+  return {
+    id: doc.id,
+    uploadId: data.uploadId,
+    userId: data.userId,
+    title: data.title,
+    description: data.description,
+    timestamp: data.timestamp,
+    createdAt: data.createdAt,
+  };
+}
+
 /**
  * Gets all moments for an upload.
  */
@@ -141,18 +156,25 @@ export async function getMomentsByUploadId(
     .collection(MOMENTS)
     .where('uploadId', '==', uploadId)
     .get();
-  return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => {
-    const data = doc.data();
-    return {
-      id: doc.id,
-      uploadId: data.uploadId,
-      userId: data.userId,
-      title: data.title,
-      description: data.description,
-      timestamp: data.timestamp,
-      createdAt: data.createdAt,
-    };
-  });
+  return snapshot.docs.map((doc) => momentFromDoc(doc));
+}
+
+/**
+ * All moments for a user, newest first (by moment createdAt). Single-field query on userId.
+ */
+export async function getMomentsByUserId(
+  userId: string
+): Promise<(Moment & { id: string })[]> {
+  const db = getDb();
+  const snapshot = await db
+    .collection(MOMENTS)
+    .where('userId', '==', userId)
+    .get();
+  const rows = snapshot.docs.map((doc) => momentFromDoc(doc));
+  rows.sort(
+    (a, b) => createdAtMillis(b.createdAt) - createdAtMillis(a.createdAt),
+  );
+  return rows;
 }
 
 /**

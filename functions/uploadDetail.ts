@@ -5,7 +5,8 @@ import {
   getCreativePacketsByUploadId,
 } from '../lib/firestore.js';
 import { getSignedViewUrl } from '../lib/storage.js';
-import type { UploadWithSignedUrls } from '../types/index.js';
+import { parseCreativePacketContent } from '../lib/creativePacket.js';
+import type { CreativePacketWithParsed, UploadWithSignedUrls } from '../types/index.js';
 
 const DEV_USER_ID = '1234567890';
 
@@ -50,5 +51,10 @@ export async function getUploadDetail(req: Request, res: Response): Promise<void
     }
   }
 
-  res.json({ upload: uploadOut, moments, creativePackets });
+  const packetsOut: CreativePacketWithParsed[] = creativePackets.map((p) => {
+    const parsed = parseCreativePacketContent(p.content);
+    return parsed ? { ...p, ...parsed } : p;
+  });
+
+  res.json({ upload: uploadOut, moments, creativePackets: packetsOut });
 }

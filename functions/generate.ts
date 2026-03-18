@@ -3,8 +3,8 @@ import {
   getMomentById,
   saveCreativePacket,
 } from '../lib/firestore.js';
-import { generateCreativePacket } from '../lib/creativePacket.js';
-import type { CreativePacket, GenerateRequestBody } from '../types/index.js';
+import { generateCreativePacketFields } from '../lib/creativePacket.js';
+import type { CreativePacketResponse, GenerateRequestBody } from '../types/index.js';
 
 const DEV_USER_ID = '1234567890';
 
@@ -27,15 +27,16 @@ export async function postGenerate(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  let content: string;
+  let fields: Awaited<ReturnType<typeof generateCreativePacketFields>>;
   try {
-    content = await generateCreativePacket(moment, body.goal.trim());
+    fields = await generateCreativePacketFields(moment, body.goal.trim());
   } catch (e) {
     console.error('Generate creative packet error:', e);
     res.status(500).json({ error: 'Failed to generate creative packet' });
     return;
   }
 
+  const content = JSON.stringify(fields);
   let packetId: string;
   try {
     packetId = await saveCreativePacket({
@@ -50,8 +51,7 @@ export async function postGenerate(req: Request, res: Response): Promise<void> {
     res.status(500).json({ error: 'Failed to save creative packet' });
     return;
   }
-
-  const packet: CreativePacket = {
+  const packet: CreativePacketResponse = {
     id: packetId,
     momentId: body.momentId,
     uploadId: moment.uploadId,
@@ -59,6 +59,7 @@ export async function postGenerate(req: Request, res: Response): Promise<void> {
     goal: body.goal.trim(),
     content,
     createdAt: { _seconds: Math.floor(Date.now() / 1000), _nanoseconds: 0 },
+    ...fields,
   };
   res.json({ packet });
 }

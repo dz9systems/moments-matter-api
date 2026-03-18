@@ -23,12 +23,15 @@ Plain **Node.js + Express + TypeScript** API (no Next.js). The frontend is a sep
 
    API runs at `http://localhost:3000` (or your `PORT`).
 
+   **Browser demo (analyze → generate → packet UI):** open **`http://localhost:3000/`** — same data shape as a `CreativePacketView` React component expects from **generate**, not from analyze alone.
+
 ## API Routes
 
-- **POST /api/analyze** — `multipart/form-data` with field `text` or `file`. Returns `uploadId`, `transcript`, `moments`. Header: `Authorization: Bearer <Firebase ID token>`.
-- **POST /api/generate** — JSON body `{ "momentId": "...", "goal": "..." }`. Returns `{ packet }`. Auth required.
-- **GET /api/history** — Returns current user's uploads (newest first). Auth required.
-- **GET /api/uploads/:id** — Returns one upload with `moments` and `creativePackets`. Auth and ownership required.
+- **POST /api/analyze** — `multipart/form-data` with field `text` or `file`. Returns `uploadId`, `transcript`, `moments` (no creative packet yet).
+- **POST /api/generate** — JSON `{ "momentId": "...", "goal": "..." }`. Returns `packet` with Firestore fields plus **`short_form_ideas`**, **`posting_recommendation`**, **`scripts`**, **`captions`**, optional **`carousel_slides`** (arrays of strings). `packet.content` is JSON storage of those fields.
+- **GET /api/history** — Returns uploads for the shared dev user (newest first).
+- **GET /api/moments** — `{ "moments": [...] }` for the shared user, newest first. Query **`?uploadId=`** to only return moments from one analysis. Fields: **`title`**, **`description`**, **`timestamp`**, **`uploadId`**, **`id`** (map `title` → headline, `description` → “why it matters”).
+- **GET /api/uploads/:id** — One upload with `moments` and `creativePackets`.
 
 ## Firestore Collections
 

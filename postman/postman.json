@@ -101,6 +101,26 @@
       }
     },
     {
+      "name": "GET /api/moments (all)",
+      "request": {
+        "auth": { "type": "noauth" },
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/moments",
+        "description": "All moments for shared user, newest first."
+      }
+    },
+    {
+      "name": "GET /api/moments (by upload)",
+      "request": {
+        "auth": { "type": "noauth" },
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/moments?uploadId={{upload_id}}",
+        "description": "Moments from one upload only. Set **upload_id** from Analyze."
+      }
+    },
+    {
       "name": "GET /api/uploads/:id",
       "request": {
         "auth": {
